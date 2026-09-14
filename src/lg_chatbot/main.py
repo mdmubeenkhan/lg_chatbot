@@ -6,7 +6,7 @@ from typing import TypedDict, Literal, Annotated
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
-from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage
+from langchain_core.messages import SystemMessage, AIMessageChunk, HumanMessage, BaseMessage
 import operator
 from langchain_openrouter import ChatOpenRouter
 
@@ -77,14 +77,49 @@ while True:
     # state_history = workflow.get_state(config=config)
     # print(f"state_history = {state_history}")
 
-    response = workflow.invoke({
-        "messages": [HumanMessage(content=user_message)]
+    # print reesponse
+    # response = workflow.invoke({
+    #     "messages": [HumanMessage(content=user_message)]
 
-    }, config=config)
-    print(f"AI: {response['messages'][-1].content}")
+    # }, config=config)
+    # print(f"AI: {response['messages'][-1].content}")
 
 
-# this is added to check 
+    # # streaming only tokens
+    # for message, metadata in workflow.stream(
+    #     {
+    #         "messages": [HumanMessage(content=user_message)]
+    #     },
+    #     config=config,
+    #     stream_mode="messages",
+    # ):
+    #     if isinstance(message, AIMessageChunk):
+    #         print(message.content, end="", flush=True)
+
+    # print()
+
+    # Streaming tokens and node updates
+    for message, metadata in workflow.stream(
+        {
+            "messages": [HumanMessage(content=user_message)]
+        },
+        config=config,
+        stream_mode="messages",
+    ):
+        if isinstance(message, AIMessageChunk):
+            print(
+                message.content,
+                end="",
+                flush=True,
+            )
+
+        # e.g. metadata["langgraph_node"]
+
+
+
+
+
+# this is added to check persistance of memory
 # thread_id = "t1"
 # config = {'configurable': {'thread_id': thread_id}}
 # initial_state = {
