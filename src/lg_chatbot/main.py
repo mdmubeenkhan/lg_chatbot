@@ -77,6 +77,7 @@ while True:
     # state_history = workflow.get_state(config=config)
     # print(f"state_history = {state_history}")
 
+
     # print reesponse
     # response = workflow.invoke({
     #     "messages": [HumanMessage(content=user_message)]
@@ -115,7 +116,9 @@ while True:
 
         # e.g. metadata["langgraph_node"]
 
-
+# get state history
+state_history = list(workflow.get_state_history(config))
+print(f"state_history = {state_history}")
 
 
 
